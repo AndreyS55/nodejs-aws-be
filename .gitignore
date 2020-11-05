@@ -20,6 +20,7 @@ lib-cov
 
 # Coverage directory used by tools like istanbul
 coverage
+**/coverage
 *.lcov
 
 # nyc test coverage
@@ -40,7 +41,8 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
-
+**/node_modules/
+**/jspm_packages/
 # TypeScript v1 declaration files
 typings/
 
@@ -81,6 +83,7 @@ typings/
 # Nuxt.js build / generate output
 .nuxt
 dist
+**/dist
 
 # Gatsby files
 .cache/
@@ -93,6 +96,11 @@ dist
 
 # Serverless directories
 .serverless/
+**/.serverless/
+
+# Webpack
+.webpack
+**/.webpack
 
 # FuseBox cache
 .fusebox/
@@ -102,3 +110,9 @@ dist
 
 # TernJS port file
 .tern-port
+
+# IDE
+.idea
+**/.idea
+.vscode
+**/.vscode
