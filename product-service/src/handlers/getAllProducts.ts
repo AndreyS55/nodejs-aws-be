@@ -1,16 +1,18 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { productList } from '../constants/productList';
-import apiResponses from '../utils/apiResponses';
+import apiResponse from '../utils/apiResponses';
+import connectToDataBase from '../utils/connectToDataBase';
+import * as ProductService from '../services/products';
 
-export const getAllProducts: APIGatewayProxyHandler = async () => {
-  console.log('Start invoking getProductsList function');
+export const getAllProducts: APIGatewayProxyHandler = async (event) => {
+  console.log('Start invoking getAllProducts function', event);
+  const db = await connectToDataBase();
   try {
-    return apiResponses['200'](productList, {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true,
-    });
+    const products = await ProductService.getAllProducts(db);
+    return apiResponse(200, products);
   } catch (e) {
     console.error('Function invocation failed', e);
-    return apiResponses['500']({ message: e.message });
+    return apiResponse(500, { message: e.message });
+  } finally {
+    await db.sequelize.close();
   }
 }
