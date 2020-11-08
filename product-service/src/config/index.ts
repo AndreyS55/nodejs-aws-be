@@ -6,8 +6,11 @@ if (!envFound) {
 }
 
 export default {
-  weatherApi: {
-    url: process.env.API_URL,
-    key: process.env.API_KEY,
-  }
+  db: {
+    url: process.env.DB_URL,
+    port:  parseInt(process.env.DB_PORT, 10),
+    name: process.env.DB_NAME,
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+  },
 };

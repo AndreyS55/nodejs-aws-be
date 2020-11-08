@@ -116,3 +116,6 @@ dist
 **/.idea
 .vscode
 **/.vscode
+
+# Sequelize migrations config
+**/src/db/config/
