@@ -2,7 +2,7 @@ import Joi from '@hapi/joi';
 import { Product } from '../interfaces/product';
 
 export const productBodySchema = Joi.object({
-  title: Joi.string().alphanum().min(3).max(55).required(),
+  title: Joi.string().min(3).max(80).required(),
   description: Joi.string().max(500),
   price: Joi.number().required(),
   imageUrl: Joi.string(),
