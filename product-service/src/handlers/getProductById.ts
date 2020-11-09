@@ -2,11 +2,13 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import * as ProductService from '../services/products';
 import apiResponse from '../utils/apiResponses';
 import connectToDataBase from '../utils/connectToDataBase';
+import { DataBase } from '../interfaces/dataBase';
 
 export const getProductById: APIGatewayProxyHandler = async (event) => {
   console.log('Started invoking getProductById function', event);
-  const db = await connectToDataBase();
+  let db: DataBase;
   try {
+    db = await connectToDataBase();
     const id = event.pathParameters?.id;
     const product = await ProductService.getProductById(db, id);
     if (!product) {

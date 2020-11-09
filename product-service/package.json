@@ -13,6 +13,7 @@
     "local": "sls invoke local -f getAllProducts"
   },
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
     "axios": "^0.21.0",
     "dotenv": "^8.2.0",
     "pg": "^8.4.2",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@serverless/event-mocks": "^1.1.1",
     "@types/aws-lambda": "^8.10.17",
+    "@types/hapi__joi": "^17.1.6",
     "@types/jest": "^26.0.15",
     "@types/node": "^10.12.18",
     "@types/serverless": "^1.72.5",
