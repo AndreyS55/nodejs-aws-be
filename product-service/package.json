@@ -5,20 +5,34 @@
   "main": "handler.js",
   "scripts": {
     "deploy": "sls deploy",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "db:migrate": "cd ./src/db & npx sequelize-cli db:migrate",
+    "db:migrate:undo:all": "cd ./src/db & npx sequelize-cli db:migrate:undo:all",
+    "db:seed": "cd ./src/db & npx sequelize-cli db:seed:all",
+    "db:seed:undo:all": "cd ./src/db & npx sequelize-cli db:seed:undo:all",
+    "local": "sls invoke local -f getAllProducts"
   },
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
     "axios": "^0.21.0",
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "pg": "^8.4.2",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.3.5",
+    "uuid": "^8.3.1"
   },
   "devDependencies": {
     "@serverless/event-mocks": "^1.1.1",
     "@types/aws-lambda": "^8.10.17",
+    "@types/hapi__joi": "^17.1.6",
     "@types/jest": "^26.0.15",
     "@types/node": "^10.12.18",
     "@types/serverless": "^1.72.5",
+    "@types/uuid": "^8.3.0",
+    "@types/validator": "^13.1.0",
     "fork-ts-checker-webpack-plugin": "^3.0.1",
     "jest": "^26.6.1",
+    "sequelize-cli": "^6.2.0",
     "serverless": "^2.9.0",
     "serverless-webpack": "^5.2.0",
     "ts-jest": "^26.4.3",

@@ -1,4 +1,5 @@
 import type { Serverless } from 'serverless/aws';
+import config from './src/config';
 
 const serverlessConfiguration: Serverless = {
   service: {
@@ -24,6 +25,11 @@ const serverlessConfiguration: Serverless = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      DB_URL: config.db.url,
+      DB_PORT: config.db.port,
+      DB_NAME: config.db.name,
+      DB_USERNAME: config.db.username,
+      DB_PASSWORD: config.db.password,
     },
   },
   functions: {
@@ -46,6 +52,18 @@ const serverlessConfiguration: Serverless = {
           http: {
             method: 'get',
             path: 'products/{id}',
+            cors: true,
+          }
+        }
+      ]
+    },
+    createProduct: {
+      handler: 'handler.createProduct',
+      events: [
+        {
+          http: {
+            method: 'post',
+            path: 'products',
             cors: true,
           }
         }

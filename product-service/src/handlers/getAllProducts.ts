@@ -1,20 +1,20 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-// import axios from 'axios';
-// import config from '../config';
-import { productList } from '../constants/productList';
-import apiResponses from '../utils/apiResponses';
+import apiResponse from '../utils/apiResponses';
+import connectToDataBase from '../utils/connectToDataBase';
+import * as ProductService from '../services/products';
+import { DataBase } from '../interfaces/dataBase';
 
-export const getAllProducts: APIGatewayProxyHandler = async () => {
-  console.log('Start invoking getProductsList function');
+export const getAllProducts: APIGatewayProxyHandler = async (event) => {
+  console.log('Start invoking getAllProducts function', event);
+  let db: DataBase;
   try {
-    // const result = await axios.get(`${config.weatherApi.url}?q=London&appid=${config.weatherApi.key}`);
-    // console.log(result.data);
-    return apiResponses['200'](productList, {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true,
-    });
+    db = await connectToDataBase();
+    const products = await ProductService.getAllProducts(db);
+    return apiResponse(200, products);
   } catch (e) {
     console.error('Function invocation failed', e);
-    return apiResponses['500']({ message: e.message });
+    return apiResponse(500, { message: e.message });
+  } finally {
+    await db.sequelize.close();
   }
 }
