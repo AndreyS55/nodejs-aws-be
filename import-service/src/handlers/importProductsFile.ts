@@ -11,7 +11,7 @@ export const importProductsFile: APIGatewayProxyHandler = async (event, _context
     if (!name) {
       return createResponse(400, { message: 'Please provide valid filename' });
     }
-    const s3 = new AWS.S3({ region: BUCKET_REGION, signatureVersion: 'v4' });
+    const s3 = new AWS.S3({ region: BUCKET_REGION });
     const catalogPath = `${BUCKET_PREFIX}${name}`;
     console.log('Path to import new file: ', catalogPath);
     const params = {

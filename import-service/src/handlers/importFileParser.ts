@@ -21,20 +21,20 @@ export const importFileParser = async (event: S3Event): Promise<{statusCode: num
           .on('data', (data) => console.log('Parsed data', data))
           .on('error', (error) => reject(error))
           .on('end', async () => {
-            console.log(`Start copying file from 'uploaded/' into 'parsed/'`);
+            console.log(`Start copying file from ${BUCKET_NAME}/${record.s3.object.key} into ${BUCKET_NAME}/parsed/`);
 
             await s3.copyObject({
               Bucket: BUCKET_NAME,
               CopySource: `${BUCKET_NAME}/${record.s3.object.key}`,
               Key: record.s3.object.key.replace('uploaded', 'parsed'),
             }).promise();
+            console.log(`File copied into ${BUCKET_NAME}/${record.s3.object.key.replace('uploaded', 'parsed')}`);
 
             await s3.deleteObject({
               Bucket: BUCKET_NAME,
               Key: record.s3.object.key,
             }).promise();
-
-            console.log(`File ${record.s3.object.key} moved to 'parsed' folder`);
+            console.log(`File ${BUCKET_NAME}/${record.s3.object.key} removed`);
             resolve();
           });
       }));
