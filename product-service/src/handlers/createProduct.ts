@@ -4,10 +4,10 @@ import connectToDataBase from '../utils/connectToDataBase';
 import * as ProductService from '../services/products';
 import { DataBase } from '../interfaces/dataBase';
 import * as ProductValidator from '../validators/productValidator';
-
+import util from 'util';
 
 export const createProduct: APIGatewayProxyHandler = async (event) => {
-  console.log('Start invoking createProduct function', event);
+  console.log('Start invoking createProduct function', util.inspect(event, { depth: 5 }));
   let db: DataBase;
   try {
     db = await connectToDataBase();

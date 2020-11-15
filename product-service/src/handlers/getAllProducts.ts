@@ -3,9 +3,10 @@ import apiResponse from '../utils/apiResponses';
 import connectToDataBase from '../utils/connectToDataBase';
 import * as ProductService from '../services/products';
 import { DataBase } from '../interfaces/dataBase';
+import util from 'util';
 
 export const getAllProducts: APIGatewayProxyHandler = async (event) => {
-  console.log('Start invoking getAllProducts function', event);
+  console.log('Start invoking getAllProducts function', util.inspect(event, { depth: 5 }));
   let db: DataBase;
   try {
     db = await connectToDataBase();
