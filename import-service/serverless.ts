@@ -1,4 +1,5 @@
 import type { Serverless } from 'serverless/aws';
+import { BUCKET_NAME, BUCKET_PREFIX } from './src/constants';
 
 const serverlessConfiguration: Serverless = {
   service: {
@@ -54,6 +55,24 @@ const serverlessConfiguration: Serverless = {
                 }
               }
             }
+          }
+        }
+      ]
+    },
+    importFileParser: {
+      handler: 'handler.importFileParser',
+      events: [
+        {
+          s3: {
+            bucket: BUCKET_NAME,
+            event: 's3:ObjectCreated:*',
+            rules: [
+              {
+                prefix: BUCKET_PREFIX,
+                suffix: '',
+              }
+            ],
+            existing: true,
           }
         }
       ]

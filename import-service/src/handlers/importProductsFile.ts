@@ -2,9 +2,10 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import AWS from 'aws-sdk';
 import { BUCKET_NAME, BUCKET_PREFIX, BUCKET_REGION } from '../constants';
 import createResponse from '../utils/createResponse';
+import util from 'util';
 
 export const importProductsFile: APIGatewayProxyHandler = async (event, _context) => {
-  console.log('Start invoking importProductsFile function', event);
+  console.log('Start invoking importProductsFile function', util.inspect(event, { depth: 5 }));
   try {
     const name = event.queryStringParameters?.name;
     if (!name) {
@@ -22,6 +23,7 @@ export const importProductsFile: APIGatewayProxyHandler = async (event, _context
     const signedUrl = await s3.getSignedUrlPromise('putObject', params);
     return createResponse(200, signedUrl);
   } catch (e) {
+    console.error(e);
     return createResponse(500, { message: e.message });
   }
 }
