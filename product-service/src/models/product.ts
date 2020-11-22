@@ -39,11 +39,24 @@ export default (sequelize: Sequelize): ProductModelStatic => {
     title: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
+      validate: {
+        notEmpty: true,
+        len: [3, 80],
+      }
     },
-    description: DataTypes.TEXT,
+    description: {
+      type: DataTypes.TEXT,
+      validate: {
+        len: [0, 500],
+      }
+    },
     price: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      validate: {
+        notEmpty: true,
+      }
     },
     imageUrl: DataTypes.STRING,
 

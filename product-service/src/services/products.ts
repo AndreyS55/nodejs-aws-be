@@ -2,6 +2,7 @@ import { Sequelize } from 'sequelize';
 import { DataBase } from '../interfaces/dataBase';
 import { ProductModel } from '../models/product';
 import { Product } from '../interfaces/product';
+import { v4 as uuidv4 } from 'uuid';
 
 export const getAllProducts = async (db: DataBase): Promise<ProductModel[]> => {
   try {
@@ -39,32 +40,23 @@ export const getProductById = async (db: DataBase, id: string): Promise<ProductM
   }
 }
 
-export const createProduct = async (db: DataBase, body: Product): Promise<ProductModel> => {
+export const createProduct = async (db: DataBase, body: Product): Promise<Product> => {
   try {
     const { title, description, price, imageUrl, count } = body;
     const result = await db.sequelize.transaction(async (t) => {
       const product = await db.Product.create({
+        id: uuidv4(), // set id manually because sequelize doesn't update it when create in loop
         title,
         description,
         price,
         imageUrl,
       }, { transaction: t });
 
-      await product.createStock({
+      const stock = await product.createStock({
         count,
       }, { transaction: t });
 
-      return await db.Product.findByPk(product.id, {
-        attributes: {
-          include: [[Sequelize.literal('"Stock"."count"'), 'count']],
-        },
-        include: [{
-          model: db.Stock,
-          attributes: [],
-          required: true,
-        }],
-        transaction: t,
-      });
+      return { ...product.get(), count: stock.get('count') };
     });
     return result;
   } catch (e) {

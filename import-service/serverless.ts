@@ -29,6 +29,11 @@ const serverlessConfiguration: Serverless = {
         Action: 's3:*',
         Resource: 'arn:aws:s3:::node-js-aws-csv/*',
       },
+      {
+        Effect: 'Allow',
+        Action: 'sqs:*',
+        Resource: '${cf:product-service-${self:provider.stage}.SQSQueueArn}',
+      },
     ],
     apiGateway: {
       minimumCompressionSize: 1024,
@@ -37,6 +42,7 @@ const serverlessConfiguration: Serverless = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      SQS_URL: '${cf:product-service-${self:provider.stage}.SQSQueueUrl}',
     },
   },
   functions: {
