@@ -57,5 +57,5 @@ export const catalogBatchProcess: SQSHandler = async (event: SQSEvent) => {
   if (failedMessages.length) {
     console.error('Partial batch failure');
   }
-  return null
+  return null;
 }
