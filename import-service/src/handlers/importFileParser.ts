@@ -5,9 +5,10 @@ import { BUCKET_NAME, BUCKET_REGION } from '../constants';
 import util from 'util';
 
 export const importFileParser = async (event: S3Event): Promise<{statusCode: number} | undefined> => {
-  console.log('importProductsFile function was triggered', util.inspect(event, { depth: 5 }));
+  console.log('importFileParser function was triggered', util.inspect(event, { depth: 5 }));
   try {
     const s3 = new AWS.S3({ region: BUCKET_REGION });
+    const sqs = new AWS.SQS();
 
     for (const record of event.Records) {
       const s3ReadStream = s3.getObject({
@@ -18,7 +19,19 @@ export const importFileParser = async (event: S3Event): Promise<{statusCode: num
       await new Promise(((resolve, reject) => {
         s3ReadStream
           .pipe(csvParser())
-          .on('data', (data) => console.log('Parsed data', data))
+          .on('data', (data) => {
+            console.log('Parsed data', data);
+            sqs.sendMessage({
+              QueueUrl: process.env.SQS_URL,
+              MessageBody: JSON.stringify(data, null, 2),
+            }, (err, data) => {
+              if (err) {
+                console.error('Sending message failed: ', err);
+              } else {
+                console.log('Send message for: ', data);
+              }
+            });
+          })
           .on('error', (error) => reject(error))
           .on('end', async () => {
             console.log(`Start copying file from ${BUCKET_NAME}/${record.s3.object.key} into ${BUCKET_NAME}/parsed/`);
@@ -35,7 +48,7 @@ export const importFileParser = async (event: S3Event): Promise<{statusCode: num
               Key: record.s3.object.key,
             }).promise();
             console.log(`File ${BUCKET_NAME}/${record.s3.object.key} removed`);
-            resolve();
+            resolve('success');
           });
       }));
     }

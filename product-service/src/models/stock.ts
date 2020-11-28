@@ -38,6 +38,9 @@ export default (sequelize: Sequelize): StockModelStatic => {
     count: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      validate: {
+        notEmpty: true,
+      }
     },
   }, {
     createdAt: false,
