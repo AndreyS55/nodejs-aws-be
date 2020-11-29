@@ -1,5 +1,6 @@
 import type { Serverless } from 'serverless/aws';
 import { BUCKET_NAME, BUCKET_PREFIX } from './src/constants';
+import { apiGatewayResponse } from './src/utils/apiGatewayResponse';
 
 const serverlessConfiguration: Serverless = {
   service: {
@@ -9,8 +10,9 @@ const serverlessConfiguration: Serverless = {
   custom: {
     webpack: {
       webpackConfig: './webpack.config.js',
-      includeModules: true
-    }
+      includeModules: true,
+    },
+    authorizerArn: { 'Fn::ImportValue': 'BasicAuthorizerArn' },
   },
   plugins: ['serverless-webpack'],
   provider: {
@@ -57,13 +59,18 @@ const serverlessConfiguration: Serverless = {
             request: {
               parameters: {
                 querystrings: {
-                  name: true
-                }
-              }
-            }
-          }
-        }
-      ]
+                  name: true,
+                },
+              },
+            },
+            authorizer: {
+              name: 'authorizer',
+              arn: '${self:custom.authorizerArn}',
+              type: 'REQUEST',
+            },
+          },
+        },
+      ],
     },
     importFileParser: {
       handler: 'handler.importFileParser',
@@ -76,14 +83,24 @@ const serverlessConfiguration: Serverless = {
               {
                 prefix: BUCKET_PREFIX,
                 suffix: '',
-              }
+              },
             ],
             existing: true,
-          }
-        }
-      ]
-    }
-  }
-}
+          },
+        },
+      ],
+    },
+  },
+  resources: {
+    Resources: {
+      GatewayResponseAccessDenied: apiGatewayResponse('ACCESS_DENIED'),
+      GatewayResponseUnauthorized: apiGatewayResponse('UNAUTHORIZED'),
+      GatewayResponseMissingAuthenticationToken: apiGatewayResponse('MISSING_AUTHENTICATION_TOKEN'),
+      GatewayResponseExpiredToken: apiGatewayResponse('EXPIRED_TOKEN'),
+      GatewayResponseAuthorizerFailure: apiGatewayResponse('AUTHORIZER_FAILURE', '{"message": "Error occurred during authorization"}'),
+      GatewayResponseAuthorizerConfigurationError: apiGatewayResponse('AUTHORIZER_CONFIGURATION_ERROR'),
+    },
+  },
+};
 
 module.exports = serverlessConfiguration;
